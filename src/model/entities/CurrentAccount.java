@@ -1,4 +1,5 @@
-package entities;
+package model.entities;
 
 public class CurrentAccount {
+
 }
