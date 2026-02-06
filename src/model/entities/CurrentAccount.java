@@ -1,6 +1,7 @@
 package model.entities;
 
 import model.exceptions.InsufficientBalanceException;
+import model.exceptions.InvalidAmountException;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -43,13 +44,13 @@ public class CurrentAccount extends Account {
     public void withdraw(double valor) {
 
         if(valor <= 0 ) {
-            throw new IllegalArgumentException("Valor invalido!");
+            throw new InvalidAmountException();
         }
 
         if (getBalance() + getOverdraftLimit() >= valor) {
             setBalance(getBalance() - valor + 2.50);
         } else {
-            throw new InsufficientBalanceException("Limite de saque atingido!");
+            throw new InsufficientBalanceException();
         }
     }
 
