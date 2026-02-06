@@ -1,17 +1,22 @@
 package model.entities;
 
 import model.exceptions.InsufficientBalanceException;
+import model.exceptions.InvalidAmountException;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 public class CurrentAccount extends Account {
+
     private Double overdraftLimit;
+    private Double overdraftInterestRate;
 
     public CurrentAccount() {}
 
-    public CurrentAccount(String number, String id, Double balance, LocalDate date, Double overdraftLimit) {
-        super(number, id, balance, date);
+    public CurrentAccount(String clientId, Double balance, Double overdraftLimit) {
+        super(clientId, balance);
         this.overdraftLimit = overdraftLimit;
+        this.overdraftInterestRate = 0.08;
     }
 
     public Double getOverdraftLimit() {
@@ -22,23 +27,41 @@ public class CurrentAccount extends Account {
         this.overdraftLimit = overdraftLimit;
     }
 
-    @Override
-    public void deposit(double valor) {
-        setBalance(getBalance() + valor);
+    public Double getOverdraftInterestRate() {
+        return overdraftInterestRate;
+    }
+
+    public void setOverdraftInterestRate(Double overdraftInterestRate) {
+        this.overdraftInterestRate = overdraftInterestRate;
     }
 
     @Override
     public void withdraw(double valor) {
 
-        if(valor <= 0 ) {
-            throw new IllegalArgumentException("Valor invalido!");
+        double fee = 2.50;
+
+        if (valor <= 0) {
+            throw new InvalidAmountException();
         }
 
-        if (getBalance() + getOverdraftLimit() >= valor) {
-            setBalance(getBalance() - valor + 2.50);
-        } else {
-            throw new InsufficientBalanceException("Limite de saque atingido!");
+        if (getBalance() + overdraftLimit < valor + fee) {
+            throw new InsufficientBalanceException();
         }
+
+        setBalance(getBalance() - valor - fee);
+    }
+
+    @Override
+    public void monthlyUpdate() {
+
+        if (getBalance() < 0) {
+            double debit = Math.abs(getBalance());
+
+            double interest = debit * getOverdraftInterestRate();
+
+            setBalance(getBalance() - interest);
+        }
+
     }
 
     @Override

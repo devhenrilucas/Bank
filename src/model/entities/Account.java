@@ -1,5 +1,7 @@
 package model.entities;
 
+import model.exceptions.InvalidAmountException;
+
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -13,12 +15,12 @@ public abstract class Account {
     public Account() {
     }
 
-    public Account(String number, String clientId, Double balance, LocalDate date) {
-        this.number = number;
+    public Account(String clientId, Double balance) {
         this.clientId = clientId;
         this.balance = balance;
-        this.date = date;
+        this.date = LocalDate.now();
     }
+
 
     public String getNumber() {
         return number;
@@ -53,10 +55,16 @@ public abstract class Account {
     }
 
     public void deposit(double valor) {
+
+        if( valor <= 0 ) {
+            throw new InvalidAmountException();
+        }
+
         setBalance(getBalance() + valor);
     };
 
     public abstract void withdraw(double valor);
 
+    public abstract void monthlyUpdate();
 
 }
