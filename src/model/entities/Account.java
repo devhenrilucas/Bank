@@ -58,5 +58,6 @@ public abstract class Account {
 
     public abstract void withdraw(double valor);
 
+    public abstract void monthlyUpdate();
 
 }
