@@ -13,8 +13,8 @@ public class CurrentAccount extends Account {
 
     public CurrentAccount() {}
 
-    public CurrentAccount(String number, String id, Double balance, LocalDate date, Double overdraftLimit, Double overdraftInterestRate) {
-        super(number, id, balance, date);
+    public CurrentAccount(String clientId, Double balance, Double overdraftLimit) {
+        super(clientId, balance);
         this.overdraftLimit = overdraftLimit;
         this.overdraftInterestRate = 0.08;
     }
@@ -36,22 +36,19 @@ public class CurrentAccount extends Account {
     }
 
     @Override
-    public void deposit(double valor) {
-        setBalance(getBalance() + valor);
-    }
-
-    @Override
     public void withdraw(double valor) {
 
-        if(valor <= 0 ) {
+        double fee = 2.50;
+
+        if (valor <= 0) {
             throw new InvalidAmountException();
         }
 
-        if (getBalance() + getOverdraftLimit() >= valor) {
-            setBalance(getBalance() - valor + 2.50);
-        } else {
+        if (getBalance() + overdraftLimit < valor + fee) {
             throw new InsufficientBalanceException();
         }
+
+        setBalance(getBalance() - valor - fee);
     }
 
     @Override
@@ -59,14 +56,13 @@ public class CurrentAccount extends Account {
 
         if (getBalance() < 0) {
             double debit = Math.abs(getBalance());
+
             double interest = debit * getOverdraftInterestRate();
 
             setBalance(getBalance() - interest);
-
         }
 
     }
-
 
     @Override
     public String toString() {

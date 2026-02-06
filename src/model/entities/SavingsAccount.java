@@ -14,8 +14,8 @@ public class SavingsAccount extends Account {
     public SavingsAccount() {
     }
 
-    public SavingsAccount(String number, String clientId, Double balance, LocalDate date, LocalDate lastInterestDate, Double tax) {
-        super(number, clientId, balance, date);
+    public SavingsAccount(String clientId, Double balance) {
+        super(clientId, balance);
         this.lastInterestDate = LocalDate.now();
         this.tax = 0.005;
     }
@@ -43,7 +43,7 @@ public class SavingsAccount extends Account {
             throw new InvalidAmountException();
         }
 
-        if (getBalance() <= valor) {
+        if (getBalance() < valor) {
             throw new InsufficientBalanceException();
         }
 
